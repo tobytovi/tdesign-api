@@ -68,6 +68,10 @@ const COMPONENT_API_MD_MAP = {
     // 也可以使用 excludes 用于排除某些框架使用该父子组件关系
     includes: ['Vue(PC)', 'VueNext(PC)', 'React(PC)', 'Angular(PC)'],
   },
+  Layout: {
+    list: ['Row', 'Col'],
+    includes: ['Vue(Mobile)'],
+  },
   Col: {
     list: ['Col', 'Row'],
     includes: mobileFrames
@@ -191,6 +195,10 @@ const TYPES_COMBINE_MAP = {
     // includes 以下框架满足此组件父子关系
     // includes 以下框架将 'Layout', 'Header', 'Aside', 'Content', 'Footer' 等组件的 API 文档，合并输出到目录 layout
     includes: ['Vue(PC)', 'VueNext(PC)', 'React(PC)', 'Angular(PC)'],
+  },
+  Layout: {
+    list: ['Row', 'Col'],
+    includes: ['Vue(Mobile)'],
   },
   Dropdown: {
     list: ['Dropdown', 'DropdownItem'],
