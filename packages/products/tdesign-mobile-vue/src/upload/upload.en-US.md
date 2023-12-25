@@ -1,7 +1,6 @@
 :: BASE_DOC ::
 
 ## API
-
 ### Upload Props
 
 name | type | default | description | required
@@ -12,6 +11,7 @@ addContent | String / Slot / Function | - | Typescript：`string \| TNode`。[se
 allowUploadDuplicateFile | Boolean | false | allow to upload duplicate name files | N
 autoUpload | Boolean | true | post upload request automatically after files being selected | N
 beforeUpload | Function | - | stop one of files to upload。Typescript：`(file: UploadFile) => boolean \| Promise<boolean>` | N
+clickUpload | Function | - | Typescript：`(context: { e: MouseEvent })` | N
 data | Object | - | extra request data of uploading. `formatRequest` can redefine all request data。Typescript：`Record<string, any> \| ((files: UploadFile[]) => Record<string, any>)` | N
 disabled | Boolean | - | make upload to be disabled | N
 fileListDisplay | Slot / Function | - | used to render file list UI。Typescript：`TNode<{ files: UploadFile[]; dragEvents?: UploadDisplayDragEvents }>`。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/blob/develop/src/common.ts) | N
@@ -19,7 +19,7 @@ files | Array | [] | `v-model:files` is supported。Typescript：`Array<T>` | N
 defaultFiles | Array | [] | uncontrolled property。Typescript：`Array<T>` | N
 format | Function | - | to redefine  `UploadFile` data structure。Typescript：`(file: File) => UploadFile` | N
 formatRequest | Function | - | redefine request data。Typescript：`(requestData: { [key: string]: any }) => { [key: string]: any }` | N
-formatResponse | Function | - | redefine response data structure。Typescript：`(response: any, context: FormatResponseContext) => ResponseType ` `type ResponseType = { error?: string; url?: string } & Record<string, any>` `interface FormatResponseContext { file: UploadFile; currentFiles?: UploadFile[] }`。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts) | N
+formatResponse | Function | - | redefine response data structure。Typescript：`(response: any, context: FormatResponseContext) => ResponseType ` `type ResponseType = { error?: string; url?: string; status?: 'fail' \| 'success'; files?: UploadFile[] } & Record<string, any>` `interface FormatResponseContext { file: UploadFile; currentFiles?: UploadFile[] }`。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts) | N
 headers | Object | - | HTTP Request Header。Typescript：`{[key: string]: string}` | N
 imageProps | Object | - | Typescript：`ImageProps`，[Image API Documents](./image?tab=api)。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts) | N
 max | Number | 0 | max count of files limit | N
@@ -31,7 +31,7 @@ useMockProgress | Boolean | true | use mock progress, instead of real progress |
 value | Array | [] | file list。`v-model` and `v-model:value` is supported。Typescript：`Array<T>` | N
 defaultValue | Array | [] | file list。uncontrolled property。Typescript：`Array<T>` | N
 withCredentials | Boolean | false | uploading request with cookie | N
-onChange | Function |  | Typescript：`(value: Array<T>, context: UploadChangeContext) => void`<br/>trigger on uploaded files change。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadChangeContext { e?: MouseEvent \| ProgressEvent; response?: any; trigger: UploadChangeTrigger; index?: number; file?: UploadFile; files?: UploadFile[] }`<br/><br/>`type UploadChangeTrigger = 'add' \| 'remove' \| 'abort' \| 'progress-success' \| 'progress' \| 'progress-fail'`<br/> | N
+onChange | Function |  | Typescript：`(value: Array<T>, context: UploadChangeContext) => void`<br/>trigger on uploaded files change。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadChangeContext { e?: MouseEvent \| ProgressEvent; response?: any; trigger: UploadChangeTrigger; index?: number; file?: UploadFile; files?: UploadFile[] }`<br/><br/>`type UploadChangeTrigger = 'add' \| 'remove' \| 'abort' \| 'progress-success' \| 'progress' \| 'progress-fail' \| 'default'`<br/> | N
 onFail | Function |  | Typescript：`(options: UploadFailContext) => void`<br/>`response.error` used for error tips, `formatResponse` can format `response`。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadFailContext { e?: ProgressEvent; failedFiles: UploadFile[]; currentFiles: UploadFile[]; response?: any; file: UploadFile; XMLHttpRequest?: XMLHttpRequest}`<br/> | N
 onPreview | Function |  | Typescript：`(options: { file: UploadFile; index: number; e: MouseEvent }) => void`<br/>trigger on preview elements click | N
 onProgress | Function |  | Typescript：`(options: ProgressContext) => void`<br/>uploading request progress event。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface ProgressContext { e?: ProgressEvent; file?: UploadFile; currentFiles: UploadFile[]; percent: number; type: UploadProgressType; XMLHttpRequest?: XMLHttpRequest }`<br/><br/>`type UploadProgressType = 'real' \| 'mock'`<br/> | N
@@ -44,7 +44,7 @@ onValidate | Function |  | Typescript：`(context: { type: UploadValidateType, f
 
 name | params | description
 -- | -- | --
-change | `(value: Array<T>, context: UploadChangeContext)` | trigger on uploaded files change。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadChangeContext { e?: MouseEvent \| ProgressEvent; response?: any; trigger: UploadChangeTrigger; index?: number; file?: UploadFile; files?: UploadFile[] }`<br/><br/>`type UploadChangeTrigger = 'add' \| 'remove' \| 'abort' \| 'progress-success' \| 'progress' \| 'progress-fail'`<br/>
+change | `(value: Array<T>, context: UploadChangeContext)` | trigger on uploaded files change。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadChangeContext { e?: MouseEvent \| ProgressEvent; response?: any; trigger: UploadChangeTrigger; index?: number; file?: UploadFile; files?: UploadFile[] }`<br/><br/>`type UploadChangeTrigger = 'add' \| 'remove' \| 'abort' \| 'progress-success' \| 'progress' \| 'progress-fail' \| 'default'`<br/>
 fail | `(options: UploadFailContext)` | `response.error` used for error tips, `formatResponse` can format `response`。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface UploadFailContext { e?: ProgressEvent; failedFiles: UploadFile[]; currentFiles: UploadFile[]; response?: any; file: UploadFile; XMLHttpRequest?: XMLHttpRequest}`<br/>
 preview | `(options: { file: UploadFile; index: number; e: MouseEvent })` | trigger on preview elements click
 progress | `(options: ProgressContext)` | uploading request progress event。[see more ts definition](https://github.com/Tencent/tdesign-mobile-vue/tree/develop/src/upload/type.ts)。<br/>`interface ProgressContext { e?: ProgressEvent; file?: UploadFile; currentFiles: UploadFile[]; percent: number; type: UploadProgressType; XMLHttpRequest?: XMLHttpRequest }`<br/><br/>`type UploadProgressType = 'real' \| 'mock'`<br/>
